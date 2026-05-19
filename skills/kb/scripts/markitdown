@@ -1,0 +1,234 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE_NAME="${MARKITDOWN_IMAGE:-markitdown:local}"
+WORKDIR="$(pwd -P)"
+
+RW_PATH_OPTS="${MARKITDOWN_RW_PATH_OPTS:---output -o}"
+RO_PATH_OPTS="${MARKITDOWN_RO_PATH_OPTS:-}"
+
+INTERACTIVE_FLAGS=()
+if [[ -n "${FORCE_TTY:-}" ]]; then
+  INTERACTIVE_FLAGS=(-it)
+elif [[ -z "${NO_TTY:-}" && -t 0 && -t 1 ]]; then
+  INTERACTIVE_FLAGS=(-it)
+fi
+
+declare -a DOCKER_ARGS
+declare -a PASSTHRU_ARGS
+declare -A SEEN_MOUNTS
+
+expand_path() {
+  local p="$1"
+  case "$p" in
+    "~") printf '%s\n' "$HOME" ;;
+    "~/"*) printf '%s\n' "$HOME/${p#~/}" ;;
+    *) printf '%s\n' "$p" ;;
+  esac
+}
+
+abs_path() {
+  local raw="$1"
+  local p parent base
+
+  p="$(expand_path "$raw")"
+
+  if [[ "$p" = /* ]]; then
+    if [[ -e "$p" ]]; then
+      if [[ -d "$p" ]]; then
+        cd "$p" && pwd -P
+      else
+        parent="$(cd "$(dirname "$p")" && pwd -P)"
+        base="$(basename "$p")"
+        printf '%s/%s\n' "$parent" "$base"
+      fi
+    else
+      parent="$(dirname "$p")"
+      base="$(basename "$p")"
+      parent="$(cd "$parent" 2>/dev/null && pwd -P || printf '%s\n' "$parent")"
+      printf '%s/%s\n' "$parent" "$base"
+    fi
+  else
+    if [[ -e "$p" ]]; then
+      if [[ -d "$p" ]]; then
+        cd "$p" && pwd -P
+      else
+        parent="$(cd "$(dirname "$p")" && pwd -P)"
+        base="$(basename "$p")"
+        printf '%s/%s\n' "$parent" "$base"
+      fi
+    else
+      parent="$(dirname "$p")"
+      base="$(basename "$p")"
+      parent="$(cd "$WORKDIR/$parent" 2>/dev/null && pwd -P || printf '%s\n' "$WORKDIR/$parent")"
+      printf '%s/%s\n' "$parent" "$base"
+    fi
+  fi
+}
+
+add_mount() {
+  local host_path="$1"
+  local mode="$2"
+  local resolved key
+
+  resolved="$(cd "$host_path" && pwd -P)"
+  key="${resolved}:${mode}"
+
+  if [[ -n "${SEEN_MOUNTS[$key]:-}" ]]; then
+    return
+  fi
+
+  SEEN_MOUNTS["$key"]=1
+  DOCKER_ARGS+=(-v "${resolved}:${resolved}:${mode}")
+}
+
+is_listed_option() {
+  local needle="$1"
+  local haystack="$2"
+  local opt
+
+  for opt in $haystack; do
+    if [[ "$needle" == "$opt" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+matches_equals_form() {
+  local arg="$1"
+  local haystack="$2"
+  local opt
+
+  for opt in $haystack; do
+    if [[ "$opt" == --* && "$arg" == "$opt="* ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+value_from_equals_form() {
+  local arg="$1"
+  printf '%s\n' "${arg#*=}"
+}
+
+option_from_equals_form() {
+  local arg="$1"
+  printf '%s\n' "${arg%%=*}"
+}
+
+handle_input_path() {
+  local raw="$1"
+  local p
+
+  p="$(abs_path "$raw")"
+
+  if [[ -e "$p" ]]; then
+    if [[ -d "$p" ]]; then
+      add_mount "$p" ro
+    else
+      add_mount "$(dirname "$p")" ro
+    fi
+  fi
+
+  PASSTHRU_ARGS+=("$p")
+}
+
+handle_output_path() {
+  local raw="$1"
+  local p parent
+
+  p="$(abs_path "$raw")"
+  parent="$(dirname "$p")"
+
+  mkdir -p "$parent"
+  add_mount "$parent" rw
+
+  PASSTHRU_ARGS+=("$p")
+}
+
+add_mount "$WORKDIR" rw
+
+expect_ro_path=0
+expect_rw_path=0
+double_dash_seen=0
+
+for arg in "$@"; do
+  if [[ "$double_dash_seen" -eq 1 ]]; then
+    candidate="$(expand_path "$arg")"
+    if [[ -e "$candidate" || -e "$WORKDIR/$candidate" ]]; then
+      handle_input_path "$arg"
+    else
+      PASSTHRU_ARGS+=("$arg")
+    fi
+    continue
+  fi
+
+  if [[ "$expect_ro_path" -eq 1 ]]; then
+    handle_input_path "$arg"
+    expect_ro_path=0
+    continue
+  fi
+
+  if [[ "$expect_rw_path" -eq 1 ]]; then
+    handle_output_path "$arg"
+    expect_rw_path=0
+    continue
+  fi
+
+  case "$arg" in
+    --)
+      double_dash_seen=1
+      PASSTHRU_ARGS+=("$arg")
+      ;;
+    -*)
+      if matches_equals_form "$arg" "$RW_PATH_OPTS"; then
+        opt_name="$(option_from_equals_form "$arg")"
+        opt_value="$(value_from_equals_form "$arg")"
+        output_abs="$(abs_path "$opt_value")"
+        output_parent="$(dirname "$output_abs")"
+        mkdir -p "$output_parent"
+        add_mount "$output_parent" rw
+        PASSTHRU_ARGS+=("${opt_name}=${output_abs}")
+      elif matches_equals_form "$arg" "$RO_PATH_OPTS"; then
+        opt_name="$(option_from_equals_form "$arg")"
+        opt_value="$(value_from_equals_form "$arg")"
+        input_abs="$(abs_path "$opt_value")"
+        if [[ -e "$input_abs" ]]; then
+          if [[ -d "$input_abs" ]]; then
+            add_mount "$input_abs" ro
+          else
+            add_mount "$(dirname "$input_abs")" ro
+          fi
+        fi
+        PASSTHRU_ARGS+=("${opt_name}=${input_abs}")
+      elif is_listed_option "$arg" "$RW_PATH_OPTS"; then
+        PASSTHRU_ARGS+=("$arg")
+        expect_rw_path=1
+      elif is_listed_option "$arg" "$RO_PATH_OPTS"; then
+        PASSTHRU_ARGS+=("$arg")
+        expect_ro_path=1
+      else
+        PASSTHRU_ARGS+=("$arg")
+      fi
+      ;;
+    *)
+      candidate="$(expand_path "$arg")"
+      if [[ -e "$candidate" || -e "$WORKDIR/$candidate" ]]; then
+        handle_input_path "$arg"
+      else
+        PASSTHRU_ARGS+=("$arg")
+      fi
+      ;;
+  esac
+done
+
+exec docker run --rm \
+  "${INTERACTIVE_FLAGS[@]}" \
+  "${DOCKER_ARGS[@]}" \
+  -w "$WORKDIR" \
+  "$IMAGE_NAME" \
+  "${PASSTHRU_ARGS[@]}"

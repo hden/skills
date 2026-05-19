@@ -1,0 +1,213 @@
+#!/bin/sh
+set -eu
+
+LLM_WIKI_RAW_URL="https://gist.githubusercontent.com/karpathy/442a6bf555914893e9891c11519de94f/raw/ac46de1ad27f92b28ac95459c782c07f6b8c964a/llm-wiki.md"
+LLM_WIKI_GIST_URL="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  kb init
+  kb doctor
+  kb sample-llm-wiki
+
+Commands:
+  init             Create docs-scoped KB boilerplate.
+  doctor           Verify required KB boilerplate exists.
+  sample-llm-wiki  Fetch the public LLM Wiki raw Markdown source into a sample entity.
+USAGE
+}
+
+now_utc() {
+  date -u "+%Y-%m-%dT%H:%M:%SZ"
+}
+
+today_utc() {
+  date -u "+%Y-%m-%d"
+}
+
+write_if_missing() {
+  path="$1"
+  content="$2"
+
+  if [ -e "$path" ]; then
+    return 0
+  fi
+
+  parent=$(dirname "$path")
+  mkdir -p "$parent"
+  printf '%s\n' "$content" > "$path"
+}
+
+fetch_url() {
+  url="$1"
+  output="$2"
+
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" -o "$output"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO "$output" "$url"
+  else
+    echo "kb: curl or wget is required to fetch $url" >&2
+    return 127
+  fi
+}
+
+init_kb() {
+  mkdir -p \
+    docs/entities \
+    docs/indexes \
+    docs/logs/ingest \
+    docs/logs/editorial \
+    docs/logs/housekeeping \
+    docs/logs/query
+
+  write_if_missing "docs/indexes/sources.md" "# Sources
+
+Derived source index. Rebuild from docs/entities.
+"
+  write_if_missing "docs/indexes/topics.md" "# Topics
+
+Derived topic index. Rebuild from docs/entities.
+"
+  write_if_missing "docs/indexes/recent-ingest.md" "# Recent Ingest
+
+Chronological projection of ingest activity.
+"
+  write_if_missing "docs/indexes/related-sources.md" "# Related Sources
+
+Derived relationship index. Rebuild from docs/entities.
+"
+  write_if_missing "docs/logs/README.md" "# Logs
+
+Chronological records of KB operations.
+"
+
+  echo "kb: initialized docs-scoped KB boilerplate"
+}
+
+doctor_kb() {
+  missing=0
+
+  for path in \
+    docs/entities \
+    docs/indexes \
+    docs/logs/ingest \
+    docs/logs/editorial \
+    docs/logs/housekeeping \
+    docs/logs/query \
+    docs/indexes/sources.md \
+    docs/indexes/topics.md \
+    docs/indexes/recent-ingest.md \
+    docs/indexes/related-sources.md
+  do
+    if [ ! -e "$path" ]; then
+      echo "missing: $path"
+      missing=1
+    fi
+  done
+
+  if [ "$missing" -eq 0 ]; then
+    echo "kb: doctor ok"
+    return 0
+  fi
+
+  echo "kb: doctor found missing boilerplate" >&2
+  return 1
+}
+
+sample_llm_wiki() {
+  init_kb >/dev/null
+
+  entity_id="source-karpathy-llm-wiki-2026"
+  entity_dir="docs/entities/$entity_id"
+  body_path="$entity_dir/body.md"
+  entity_path="$entity_dir/entity.edn"
+  note_path="$entity_dir/note.md"
+  captured_at=$(now_utc)
+  log_path="docs/logs/ingest/$(today_utc)-llm-wiki.md"
+
+  mkdir -p "$entity_dir"
+
+  if [ ! -e "$body_path" ]; then
+    tmp_path="$body_path.tmp"
+    fetch_url "$LLM_WIKI_RAW_URL" "$tmp_path"
+    mv "$tmp_path" "$body_path"
+  fi
+
+  write_if_missing "$entity_path" "{:entity/id \"$entity_id\"
+ :entity/title \"LLM Wiki\"
+ :entity/created-at \"$captured_at\"
+ :entity/roles #{:role/source}
+ :entity/links {}
+ :source/title \"LLM Wiki\"
+ :source/author [\"Andrej Karpathy\"]
+ :source/url \"$LLM_WIKI_GIST_URL\"
+ :source/path \"body.md\"
+ :source/files [{:name \"llm-wiki.md\"
+                 :raw-url \"$LLM_WIKI_RAW_URL\"}]
+ :capture/collected-at \"$captured_at\"
+ :capture/reason \"Public sample source for verifying kb init and ingest behavior.\"}"
+
+  write_if_missing "$note_path" "# LLM Wiki
+
+## Why this is kept
+
+Public sample source for verifying that the KB can capture a raw Markdown source into a docs-scoped entity.
+
+## Source pointers
+
+- Original URL: $LLM_WIKI_GIST_URL
+- Raw Markdown URL: $LLM_WIKI_RAW_URL
+- Canonical payload in this KB: \`body.md\`
+
+## Capture context
+
+Collected at $captured_at by \`kb sample-llm-wiki\`.
+"
+
+  write_if_missing "$log_path" "# Ingest: LLM Wiki
+
+- Source: $LLM_WIKI_GIST_URL
+- Raw Markdown: $LLM_WIKI_RAW_URL
+- Capture Time: $captured_at
+- Canonical Location: \`$entity_dir\`
+- Next Step: query or editorial as needed
+"
+
+  if ! grep -F "$entity_id" docs/indexes/sources.md >/dev/null 2>&1; then
+    {
+      printf '\n'
+      printf -- '- [%s](../entities/%s/) - LLM Wiki\n' "$entity_id" "$entity_id"
+    } >> docs/indexes/sources.md
+  fi
+
+  if ! grep -F "$entity_id" docs/indexes/recent-ingest.md >/dev/null 2>&1; then
+    {
+      printf '\n'
+      printf -- '- %s: [%s](../entities/%s/)\n' "$(today_utc)" "$entity_id" "$entity_id"
+    } >> docs/indexes/recent-ingest.md
+  fi
+
+  echo "kb: sampled LLM Wiki into $entity_dir"
+}
+
+case "${1:-}" in
+  init)
+    init_kb
+    ;;
+  doctor)
+    doctor_kb
+    ;;
+  sample-llm-wiki)
+    sample_llm_wiki
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    echo "kb: unknown command: $1" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

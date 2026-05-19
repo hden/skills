@@ -1,0 +1,16 @@
+FROM python:3.13-slim-bullseye
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    EXIFTOOL_PATH=/usr/bin/exiftool \
+    FFMPEG_PATH=/usr/bin/ffmpeg
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    exiftool \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir "markitdown[all]"
+
+ENTRYPOINT ["markitdown"]
