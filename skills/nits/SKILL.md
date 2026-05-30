@@ -10,7 +10,7 @@ When this skill is activated, you (the Primary Agent) must delegate the review t
 ## Instructions for Primary Agent
 
 1.  **Identify the Plan**: Capture the current plan, design document, or proposed steps that need reviewing.
-2.  **Invoke Subagent**: Call `invoke_agent` with an appropriate subagent (typically `generalist`).
+2.  **Invoke Subagent**: Delegate the task to an appropriate subagent (e.g., `generalist`).
 3.  **Construct the Delegation Prompt**: Use the following template, ensuring the file paths are correctly resolved relative to the workspace root:
 
 ```markdown
