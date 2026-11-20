@@ -1,13 +1,17 @@
 ---
 name: kb
-description: Use when creating, operating, or maintaining a lightweight docs-scoped knowledge base with commands such as kb init, kb ingest, kb query, kb editorial, or kb housekeeping. Supports boilerplate setup, source capture, evidence-backed retrieval, editorial refinement, consistency checks, and optional MarkItDown-assisted conversion.
+description: Use when creating, operating, or maintaining a lightweight local or GitHub Wiki knowledge base with commands such as kb setup, kb migrate, kb ingest, or kb query. Supports team setup, selective memory migration, source capture, evidence-backed retrieval, editorial refinement, consistency checks, and optional MarkItDown-assisted conversion.
 ---
 
 # KB
 
 Use this skill when the user wants to create or operate a small agent-maintained knowledge base.
 
-## Command Routing
+## Choose the KB
+
+Use the project Wiki setting first, then a matching global setting, then the local `docs/` KB. For team setup and all Wiki operations, read [Wiki](references/wiki.md). `kb setup`, `kb migrate`, and `kb publish` are agent operations. For a shared Wiki, use its Markdown pages for ingest, query, editorial, and housekeeping. The routing and paths below apply to local mode.
+
+## Local Commands
 
 Treat the first command word as the operation:
 
@@ -44,7 +48,7 @@ Disallowed material:
 - For ingest, query, editorial, and housekeeping behavior, read `references/operations.md`.
 - For MarkItDown setup and review policy, read `references/markitdown.md`.
 
-## Operating Rules
+## Local Operating Rules
 
 - Keep canonical knowledge under `docs/entities`.
 - Treat `docs/indexes` as rebuildable projections, not truth.
