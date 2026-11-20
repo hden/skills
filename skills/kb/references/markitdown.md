@@ -10,7 +10,7 @@ Build it from the skill directory:
 docker build -f assets/Dockerfile.markitdown -t markitdown:local .
 ```
 
-Then use `scripts/markitdown` from the target KB repository:
+Then use `scripts/markitdown` from a scratch directory outside the KB:
 
 ```sh
 path/to/skills/kb/scripts/markitdown input.pdf -o output.md
@@ -33,4 +33,4 @@ If accepted, keep markdown as a supplemental artifact such as `markitdown.md`.
 
 If rejected, fall back to a simpler capture path and record the reason.
 
-Do not replace the canonical payload with MarkItDown output unless the user explicitly chooses that policy.
+Review both the source and the converted output for sensitive content before copying any material into the KB.

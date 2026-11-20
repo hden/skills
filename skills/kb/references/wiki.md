@@ -1,32 +1,7 @@
-# Team Wiki
+# GitHub Wiki
 
-## Setup
+Use the configured Wiki working directory. Start with `Home.md` if it indexes the pages. Preserve the Wiki's page naming and links. Add or update the entry for a page in `Home.md` or the existing sidebar when it serves as navigation. Verify links using the Wiki's conventions.
 
-`kb setup [--scope project|global|both] [--wiki OWNER/REPO] [--publish auto|manual]`
+Confirm who can read the Wiki before writing. Follow the team's established Git workflow for syncing or publishing changes.
 
-Default to project scope and auto publish. Retain existing settings. Ask for missing values. Verify the Wiki can be cloned.
-
-Write one managed line between `<!-- kb:begin -->` and `<!-- kb:end -->`:
-
-> Read the `kb` skill for team knowledge in `OWNER/REPO`.
-
-Add eligible repos or orgs for global scope and `publish=manual` if selected. Preserve other text and report changes.
-
-- Project: Git-root `AGENTS.md`. Add `@AGENTS.md` to root `CLAUDE.md` if needed.
-- Global: `AGENTS.md` in `CODEX_HOME` (default `~/.codex`), and `CLAUDE.md` in `CLAUDE_CONFIG_DIR` (default `~/.claude`).
-- Update applicable Codex `AGENTS.override.md` files too.
-
-## Use
-
-- Before work: clone the configured `https://github.com/OWNER/REPO.wiki.git` into a fresh directory (shallow for queries only). Read `Home.md` if present, then relevant pages. Search Markdown as needed.
-- During work: update the matching page with verified findings, scope, and evidence. If the Wiki uses a maintained index, add one line per new page.
-- After work: check the staged diff for secrets, personal or customer data, and audience. Run configured secret checks such as the `secretlint` pre-commit hook. Keep the manual review for personal and customer data. Commit once if changed. Auto mode runs `scripts/publish-wiki <clone>`; manual mode reports the draft path.
-- `kb publish <clone>`: verify both remote URLs and review again. For `kb.migration` drafts, recheck the audience. Report the commit and page URLs, or the retained draft path. On index conflicts, reapply in a fresh clone, keep both entries, and carry over `kb.migration` before publishing.
-
-## Migrate
-
-On explicit `kb migrate [path ...]`, inspect curated Codex `memories` / `memories_v2`, matching Claude project memory, and supplied paths. Exclude transcripts and material with uncertain scope.
-
-Verify evidence and audience, then merge reusable findings into existing pages. Mark the clone with `git config --local kb.migration true`. Publish only to a verified private or internal Wiki when all its readers may see the material. Otherwise keep a draft. Report counts and page URLs.
-
-For [Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web) (including Routines), use Markdown in a regular GitHub repository if the source picker omits Wikis. GitHub Pages is optional for readers. Verify site access before enabling it.
+[GitHub Wiki documentation](https://docs.github.com/en/communities/documenting-your-project-with-wikis/adding-or-editing-wiki-pages)
