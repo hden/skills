@@ -2,15 +2,8 @@
 
 1. Settle with the user: directory (reuse, clone, or create), readership (warn if publishing widens it), and publication mode (`auto` default, or `confirm`).
 2. Verify the directory is readable and, for Git, `git push --dry-run` succeeds.
-3. Offer a secretlint pre-commit hook; install it only if it runs here. Hooks are per clone.
-
-   ```sh
-   #!/bin/sh
-   # $(git -C "$MEM" rev-parse --git-path hooks)/pre-commit, mode 755
-   [ -z "$(git diff --cached --name-only --diff-filter=ACMR)" ] && exit 0
-   git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secretlint/quick-start
-   ```
-4. Write the configuration where every agent in use loads it (see agents), replacing any earlier one. Global scope, on request, names the absolute project directory.
+3. Offer the secretlint pre-commit hook from git; install it only if it runs here. Hooks are per clone.
+4. Write the configuration where every agent in use loads it, replacing any earlier one. Global scope, on request, names the absolute project directory.
 5. Report the files changed.
 
 Example:

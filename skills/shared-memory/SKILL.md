@@ -13,10 +13,10 @@ Read the references that apply:
 |---|---|
 | Git repository | [git](references/git.md) |
 | GitHub Wiki | [git](references/git.md), [github-wiki](references/github-wiki.md) |
-| Local folder | [local-folder](references/local-folder.md) |
+| Local folder | [local-folder](references/local-folder.md), [git](references/git.md) |
 | Where each agent keeps instructions and memory | [agents](references/agents.md) |
-| `shared-memory setup` | [setup](references/setup.md) |
-| `shared-memory migrate` | [migrate](references/migrate.md) |
+| `shared-memory setup` | [setup](references/setup.md), [agents](references/agents.md), [git](references/git.md) |
+| `shared-memory migrate` | [migrate](references/migrate.md), [agents](references/agents.md) |
 | First page where no convention exists | [page-template](references/page-template.md) |
 
 ## Configuration
