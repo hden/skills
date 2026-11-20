@@ -43,7 +43,7 @@ git -C "$MEM" push
 
 ## Secretlint hook
 
-Requires Node.js. If a `pre-commit` hook already exists there, ask instead of overwriting it.
+Requires Node.js. Pin secretlint the way the memory repository manages its tools, if it does. If a `pre-commit` hook already exists, ask instead of overwriting it.
 
 ```sh
 MEM=<directory>; : "${MEM:?}"
@@ -51,7 +51,7 @@ hooks=$(cd "$MEM" && cd "$(git rev-parse --git-path hooks)" && pwd); : "${hooks:
 cat > "$hooks/pre-commit" <<'HOOK'
 #!/bin/sh
 [ -z "$(git diff --cached --name-only --diff-filter=ACMR)" ] && exit 0
-git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secretlint/quick-start@13.1.0
+git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secretlint/quick-start
 HOOK
 chmod 755 "$hooks/pre-commit"
 ```
