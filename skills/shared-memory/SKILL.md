@@ -7,7 +7,7 @@ description: Memory that a team's coding agents share through a Markdown directo
 
 An agent's own memory stays with one person and tool. Shared memory is a Markdown directory the whole team's agents read and write, so the next agent starts from what the team already learned.
 
-Read only the references that apply:
+Read the references that apply:
 
 | When | Reference |
 |---|---|
