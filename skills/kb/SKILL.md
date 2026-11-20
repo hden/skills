@@ -28,6 +28,9 @@ Recommend secretlint. When configured, run it on changed files before handing th
 
 ## Import and handoff
 
-- Use [MarkItDown](references/markitdown.md) as an optional source conversion aid.
 - On explicit `kb migrate`, use [Memory migration](references/migration.md).
 - Use the environment's established workflow for synchronization, commits, and publication.
+
+## Tool reference
+
+[MarkItDown](references/markitdown.md) describes the bundled Docker wrapper for converting supported sources to Markdown.

@@ -1,4 +1,6 @@
-# MarkItDown Support
+# MarkItDown
+
+MarkItDown converts supported sources to Markdown. Some web pages cannot be converted or produce incomplete output. In those cases, use another available source format, summarize verified content, or keep a source link.
 
 ## Setup
 
@@ -30,7 +32,5 @@ Accept when:
 - UI, navigation, script, or comment noise does not dominate
 
 If accepted, keep markdown as a supplemental artifact such as `markitdown.md`.
-
-If rejected, fall back to a simpler capture path and record the reason.
 
 Review both the source and the converted output for sensitive content before copying any material into the KB.
