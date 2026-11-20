@@ -1,5 +1,3 @@
 # Memory Migration
 
-On explicit `kb migrate`, read the supplied files or relevant curated notes under the active Codex home's `memories/` or `memories_v2/`, or the matching Claude Code project's memory directory. Use the configured memory location when known.
-
-Select reusable findings for the target project. Exclude raw transcripts, personal preferences, and material of uncertain scope. Verify the evidence and actual readership before writing. Merge eligible findings into the relevant Markdown pages. Report the changed paths and summarize exclusions without quoting sensitive content.
+Sources: supplied files, or curated notes in the agent's memory directory (e.g. Codex `memories/`, Claude Code project memory). Skip transcripts, personal preferences, and anything of unclear scope. Verify, merge into existing pages, and report changed paths and what was excluded without quoting it.

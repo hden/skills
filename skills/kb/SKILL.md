@@ -5,34 +5,26 @@ description: Manages team memory in a Markdown knowledge base. Applies when a pr
 
 # kb
 
-This skill extends the memory model of Codex and Claude Code to a team. Recall relevant knowledge before work and capture reusable findings as you go in a shared Markdown directory. A team can have one member. Work with the directory through the filesystem.
+Team-shared agent memory in a Markdown directory. A team can have one member.
 
-## Locate and confirm the KB
+## Locate
 
-Use an explicitly named team or directory first, then the project's configured team, then a global instruction scoped to this project. If this project has one configured KB, use it. If it has several, use the default or ask which one to use. Confirm the destination if the selected path is missing or unclear. Without a configured team, use the KB only on explicit request.
+Precedence: explicitly named team or directory, project instruction, global instruction scoped to this project. Several KBs: use the default or ask. No configured KB: use only on explicit request. State the resolved absolute path before first use and when switching; ask if it looks wrong.
 
-Immediately after loading this skill and resolving the destination, verify that it is the intended directory. Before reading, editing, or syncing the KB, tell the user the resolved absolute path in one short line. Repeat this when switching KBs. Ask before proceeding if the path is unexpected or ambiguous.
-
-For `kb setup`, see [Setup](references/setup.md). Resolve the path once from those instructions for routine work. For presentation conventions, use [GitHub Wiki](references/wiki.md) or [GitHub Pages](references/pages.md) when applicable.
+`kb setup`: [Setup](references/setup.md). Conventions: [GitHub Wiki](references/wiki.md), [GitHub Pages](references/pages.md).
 
 ## Recall and remember
 
-- Before work in a configured project, use the existing index if available, then search Markdown and read relevant pages. Verify time-sensitive details against their sources before relying on them.
-- During work, capture reusable findings such as pitfalls, verified workarounds, decision rationale, and pointers to authoritative sources. Leave personal preferences and scratch notes to the agent's own memory. Skip details readily available from the project's code or documentation.
-- Search before creating a page. Update the best match, consolidate duplicates, and replace stale statements when the evidence supports a correction. Record the source and verification date. Label hypotheses and unresolved contradictions. Keep existing navigation current and report the paths changed.
-- On an explicit cleanup request, review the requested scope for duplicates, stale claims, and broken links. Preserve evidence and flag unresolved discrepancies.
+- Before work: read the index if any, search, read relevant pages. Verify time-sensitive claims.
+- During work: record reusable findings (pitfalls, workarounds, decisions with reasons, pointers to sources). Personal notes stay in the agent's own memory. Skip what code or docs already say.
+- Update the best-matching page instead of adding one; fix stale claims; record source and date; label hypotheses; keep navigation current.
+- Cleanup on request: duplicates, stale claims, broken links.
 
-## Review before writing
+## Before writing
 
-Check the actual readership. Keep secrets, personal information, individual evaluations, and customer data out of pages, attachments, and indexes. Ask before writing when eligibility is unclear. Review source material and converted output outside the KB before copying either in.
+Write only what every reader may see. Never write secrets, personal information, evaluations of individuals, or customer data; ask when unsure. secretlint is strongly recommended, not required; when configured, run it and never bypass it. Manual review applies either way.
 
-Recommend secretlint. When configured, run it on changed files before handing them off for publication. Review personal and customer data separately. Remove flagged secrets from proposed edits and report only the affected path and kind of issue.
+## Handoff
 
-## Import and handoff
-
-- On explicit `kb migrate`, use [Memory migration](references/migration.md).
-- At the start and end of work in a configured KB, follow [Synchronization](references/sync.md).
-
-## Tool reference
-
-[MarkItDown](references/markitdown.md) describes the bundled Docker wrapper for converting supported sources to Markdown.
+- `kb migrate`: [Memory migration](references/migration.md).
+- Start and end of work: [Synchronization](references/sync.md).

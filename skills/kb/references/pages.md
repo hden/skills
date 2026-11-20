@@ -1,7 +1,5 @@
 # GitHub Pages
 
-Identify the site's content source and entry page from its existing branch/folder configuration or build workflow. Edit the source Markdown and preserve the site's front matter, navigation, and generated URL conventions. Check links against the rendered paths, including the site's base path, and run the existing build when available.
-
-Confirm the deployed site's audience separately from repository access before writing. Use the site's existing publication workflow.
+Edit the source Markdown found via the site's publishing source or build workflow. Keep front matter, navigation, and URL conventions; check links against rendered paths including the base path; run the existing build. The deployed site's audience can differ from repository access.
 
 [GitHub Pages publishing sources](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)

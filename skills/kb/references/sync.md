@@ -1,10 +1,18 @@
 # Synchronization
 
-A configured team KB with a Git upstream syncs automatically unless instructed otherwise. Apply the team's existing publication workflow when it specifies one.
+For Git-backed KBs. Without an upstream, just save and report paths.
 
-- Before recalling memories, check the KB's Git status and fetch its configured upstream. If the fetch fails or the local branch contains commits absent from the fetched upstream, disable automatic publication for this task and report why. Use a fast-forward update on a clean working tree. If the tree is dirty or the branches have diverged, preserve the existing work and review the state before editing or syncing.
-- After recording memories, skip publication if this task changed no KB files. Review the exact changes for secrets, personal and customer data, and the destination's readership. Run configured checks, including secretlint where available. Stage only this task's reviewed KB changes and leave unrelated changes alone. Before committing, verify that the local branch still matches the fetched upstream. Then commit the reviewed changes. Verify that the new commit's only parent is the fetched upstream tip and push that exact commit to the verified upstream branch without waiting for a separate instruction. If automatic publication was disabled or the branch no longer matches, leave the edits in place. If unrelated staged changes prevent an isolated commit, leave the edits in place and report the blocker.
-- If a push races with another update, fetch and integrate the upstream changes using the team's workflow. Preserve both contributors' edits, review the merged result, and retry once only after confirming that the commits absent from the fetched upstream contain only this task's reviewed changes. If a conflict cannot be resolved confidently or publication fails again, retain the work and report the blocker. Avoid force pushes and destructive resets.
-- A plain directory or Git branch without a configured upstream still supports the same memory operations. Save the edits in place and report their paths.
+Start:
+- Missing directory: clone the recorded upstream; reinstall the recorded hook.
+- Fetch. On failure, skip publication this task and say why.
+- Leftover edits or unpushed commits from earlier work: review and publish them first, or ask. Never discard.
+- Then fast-forward, or rebase local commits.
 
-Report the pushed commit and changed pages when published. For unpublished edits, report the saved paths and any blocker.
+End (skip if nothing changed):
+- Review the diff for secrets, personal and customer data, and readership. Run configured checks.
+- Changes you did not make in the same files (e.g. another session): stop and report. Parallel sessions need separate clones or worktrees.
+- Commit only reviewed changes on top of the fetched upstream. `auto`: push. `confirm`: show the diff, push after approval.
+- Push rejected: fetch and rebase (no merge). On conflicts keep both sides; concurrent index lines usually both belong. Contradictions: keep both and ask. Retry once, then report.
+- No force push, no destructive reset.
+
+Report the pushed commit and changed pages, or the saved paths and blocker.

@@ -1,9 +1,11 @@
 # Setup
 
-For `kb setup`, identify the project directory, KB directory, and intended readership. Reuse an existing Markdown directory or create the chosen directory for a new KB. Confirm any missing values. Check whether publication broadens who can read the files.
+Settle: project directory, KB directory, readership, and for Git-backed KBs the upstream URL and publication mode (`auto` default, or `confirm`). Reuse, clone, or create the directory. Warn if publication widens readership.
 
-Use project scope by default. Add or update the team-memory instruction in the project's `AGENTS.md`. Use global scope when requested or when the project file cannot be edited. In global scope, write the instruction in the agent's global instructions and name the absolute project directory it applies to. Preserve unrelated instructions. Use an absolute KB path, a path relative to the named project directory, or an environment variable containing the path. If a configured variable is unset, ask for the path before using the KB.
+Write the instruction in the project's `AGENTS.md`, or globally (naming the absolute project directory) when asked or the project file is not editable. Make sure every agent in use loads it; e.g. Claude Code reads `CLAUDE.md`, so import `@AGENTS.md` there. Preserve other content. The KB path may be absolute, project-relative, or an environment variable.
 
-Example project instruction:
+For Git-backed KBs, offer a secretlint pre-commit hook once; install it only if it runs here. Record the choice.
 
-> Always load the kb skill for team memory in this project. The KB is at `$PLATFORM_KB_DIR` and is readable by the Platform team. After loading the skill, verify the resolved KB path and state it before using the KB.
+Example:
+
+> Always load the kb skill for team memory in this project. KB: `$PLATFORM_KB_DIR`, cloned from `https://github.com/example/platform.wiki.git`, readable by the Platform team. Publication: auto. secretlint hook: yes. State the resolved KB path before use.
