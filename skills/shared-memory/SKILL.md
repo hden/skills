@@ -5,53 +5,33 @@ description: Memory that a team's coding agents share through a Markdown directo
 
 # shared-memory
 
-An agent's own memory stays with one person and tool. Shared memory is a Markdown directory the whole team's agents read and write, so the next agent starts from what the team already learned.
-
-Read the references that apply:
-
-| When | Reference |
-|---|---|
-| Git repository | [git](references/git.md) |
-| GitHub Wiki | [git](references/git.md), [github-wiki](references/github-wiki.md) |
-| Local folder | [local-folder](references/local-folder.md) |
-| `shared-memory setup` | [setup](references/setup.md), [agents](references/agents.md), [git](references/git.md) |
-| `shared-memory migrate` | [migrate](references/migrate.md), [agents](references/agents.md) |
-| First page where no convention exists | [page-template](references/page-template.md) |
+Memory that a team's coding agents share through a Markdown directory, so the next agent, on any tool, starts from what the team already learned. Recall before work, record reusable findings as you go, and publish after work.
 
 ## Configuration
 
-Setup records in the project's agent instructions: directory and storage, readership, publication mode (`auto` or `confirm`), and whether a secretlint hook is installed.
+The project's agent instructions name the directory and storage (Git repository, GitHub Wiki, or local folder), the readership, the publication mode (`auto` or `confirm`), and whether a secret check is installed. Without them, ask for the directory or offer setup. State the directory you use.
 
-Without a configuration, ask for the directory or offer setup. State the directory you use at first use and in the final report.
+## Team rules
 
-## Before work
+- Readership is the boundary. Never write secrets, personal information, evaluations of individuals, or customer data. Keep out anything else a configured reader may not see, such as internal hosts in a public directory.
+- Record what is reusable and not already in code or docs. Personal preferences stay in the agent's own memory.
+- Publish only reviewed changes. With `confirm`, and for anything nobody has reviewed (leftovers from an earlier session, migrated memories), get the user's approval of exactly what will be published.
+- Never discard others' work or bypass a secret check. Leave source memories in place unless asked.
+- Report what was written where, even in `auto` mode.
 
-1. Sync as the storage reference describes. Publish leftovers from an earlier session first, always with `confirm`: nobody has reviewed them.
-2. Read the index, then only the relevant pages; otherwise search.
-3. Pages are as of when they were written. Verify named files, commands, or flags before relying on them.
+## Conventions
 
-## While working
+- Follow the existing page format and index. If there is none, use the [page template](references/page-template.md).
+- secretlint as a pre-commit hook is strongly recommended, not required.
 
-Record findings as soon as you learn them.
+## Setup
 
-- Record: pitfalls, environment quirks, verified workarounds, procedures, decisions with reasons, where resources live.
-- Skip: what code, docs, or history already say; one-off details; personal preferences (the agent's own memory).
-- If a page covers the same topic, update it; otherwise add a page. Fix wrong statements instead of appending contradictions.
-- Separate observations (evidence, absolute date) from hypotheses (reasoning).
-- Follow the existing format, language, and naming, or the page template if there is none. Add new pages to the index.
+Agree on the directory, readership (warn if publishing widens it), and mode (`auto` by default). Verify the directory is writable and, with a Git remote, that you can push. Offer the secretlint hook without overwriting an existing one. Write the configuration where every agent in use loads it: `AGENTS.md`, imported from `CLAUDE.md` with `@AGENTS.md` for Claude Code.
 
-## What may be written
+## Migrate
 
-1. Never, whatever the readership: secrets, personal information or evaluations of individuals, customer data.
-2. Otherwise, only what every configured reader may see. Keep internal hostnames, IPs, and URLs out of public memory.
+From paths the user gives or the agents' own memory files, move only findings that are reusable and fit the readership. Skip transcripts.
 
-When unsure, ask. secretlint is strongly recommended, not required; it catches only token-like strings.
+## Known pitfalls
 
-## After work
-
-Skip if nothing changed.
-
-1. Review the full diff, leftovers included, against "What may be written".
-2. If the secret check flags something, remove it and retry.
-3. Publish as the storage reference describes. Never discard others' work; if stuck, leave yours unpublished and report.
-4. Report what was written where, even in `auto` mode.
+- Claude Code in the cloud, including Routines, cannot select a GitHub Wiki as a source; use a regular repository there.
