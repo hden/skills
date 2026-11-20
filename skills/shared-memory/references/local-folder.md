@@ -1,3 +1,7 @@
 # Local folder storage
 
-No sync or push. Save the files. If the folder is a Git repository, commit as in git's Publish (staging check, `confirm`, secret check) without pull and push. Readership is whoever can read the folder. Report the changed paths.
+No sync or push. Readership is whoever can read the folder.
+
+If the folder is a Git repository, review `git -C "$MEM" diff` (with `confirm`, wait for approval), then add and commit only the reviewed pages. Otherwise just save the files.
+
+Report the changed paths.

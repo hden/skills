@@ -13,7 +13,7 @@ Read the references that apply:
 |---|---|
 | Git repository | [git](references/git.md) |
 | GitHub Wiki | [git](references/git.md), [github-wiki](references/github-wiki.md) |
-| Local folder | [local-folder](references/local-folder.md), [git](references/git.md) |
+| Local folder | [local-folder](references/local-folder.md) |
 | Where each agent keeps instructions and memory | [agents](references/agents.md) |
 | `shared-memory setup` | [setup](references/setup.md), [agents](references/agents.md), [git](references/git.md) |
 | `shared-memory migrate` | [migrate](references/migrate.md), [agents](references/agents.md) |

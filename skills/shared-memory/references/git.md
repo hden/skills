@@ -24,15 +24,15 @@ If a secret check is configured and this clone lacks the hook, install it (below
 ```sh
 MEM=<directory>; : "${MEM:?}"
 git -C "$MEM" add <reviewed pages>
-git -C "$MEM" diff --cached --name-only   # must list only reviewed pages
+git -C "$MEM" diff --cached              # must match the reviewed diff exactly
 git -C "$MEM" commit -m "<what and why>"
 git -C "$MEM" pull --rebase
 git -C "$MEM" log -p @{u}..               # everything the push publishes
 git -C "$MEM" push
 ```
 
-- Stop if anything unreviewed is staged, or if another session is editing the same clone.
-- `confirm`: show the `log -p @{u}..` output and push only after approval. On rejection, `git -C "$MEM" reset --soft @{u}` and report.
+- Stop if the staged diff contains anything unreviewed, or if another session is editing the same clone.
+- `confirm`: show the `log -p @{u}..` output and push only after approval. On rejection, `git -C "$MEM" reset --soft @{u}` and `git -C "$MEM" stash push -m "shared-memory: rejected"` so later syncs are not blocked, and report.
 - Never use `--no-verify` or force-push.
 
 ## Conflicts
@@ -43,13 +43,15 @@ git -C "$MEM" push
 
 ## Secretlint hook
 
+Requires Node.js. If a `pre-commit` hook already exists there, ask instead of overwriting it.
+
 ```sh
 MEM=<directory>; : "${MEM:?}"
 hooks=$(cd "$MEM" && cd "$(git rev-parse --git-path hooks)" && pwd); : "${hooks:?}"
 cat > "$hooks/pre-commit" <<'HOOK'
 #!/bin/sh
 [ -z "$(git diff --cached --name-only --diff-filter=ACMR)" ] && exit 0
-git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secretlint/quick-start
+git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secretlint/quick-start@13.1.0
 HOOK
 chmod 755 "$hooks/pre-commit"
 ```
