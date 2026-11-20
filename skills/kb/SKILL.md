@@ -31,7 +31,7 @@ Recommend secretlint. When configured, run it on changed files before handing th
 ## Import and handoff
 
 - On explicit `kb migrate`, use [Memory migration](references/migration.md).
-- At the start and end of work in a configured KB, follow [Synchronization](references/sync.md). Synchronize automatically when a Git upstream is configured, unless instructions disable it. Report saved pages and publication status.
+- At the start and end of work in a configured KB, follow [Synchronization](references/sync.md).
 
 ## Tool reference
 
