@@ -6,7 +6,7 @@ Shell state may not persist: start every block with `MEM=<directory>; : "${MEM:?
 
 ```sh
 MEM=<directory>; : "${MEM:?}"
-[ -d "$MEM/.git" ] || git clone <upstream> "$MEM"
+[ -e "$MEM/.git" ] || git clone <upstream> "$MEM"
 git -C "$MEM" status --short; git -C "$MEM" log --oneline @{u}..
 ```
 
@@ -43,12 +43,16 @@ git -C "$MEM" push
 
 ## Secretlint hook
 
+Requires Node.js. Pin secretlint the way the memory repository manages its tools, if it does. If a `pre-commit` hook already exists, ask instead of overwriting it.
+
 ```sh
 MEM=<directory>; : "${MEM:?}"
 hooks=$(cd "$MEM" && cd "$(git rev-parse --git-path hooks)" && pwd); : "${hooks:?}"
 cat > "$hooks/pre-commit" <<'HOOK'
 #!/bin/sh
 [ -z "$(git diff --cached --name-only --diff-filter=ACMR)" ] && exit 0
+# secretlint reads the working tree, so it must match the index
+git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 git diff --quiet -- || { echo "re-add files edited after staging" >&2; exit 1; }
 git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secretlint/quick-start
 HOOK
 chmod 755 "$hooks/pre-commit"
