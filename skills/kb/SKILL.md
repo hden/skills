@@ -5,7 +5,7 @@ description: Manages team memory in a Markdown knowledge base. Applies when a pr
 
 # kb
 
-A team can have one member. Work with the team's Markdown directory through the filesystem.
+This skill extends the memory model of Codex and Claude Code to a team. Recall relevant knowledge before work and capture reusable findings as you go in a shared Markdown directory. A team can have one member. Work with the directory through the filesystem.
 
 ## Locate and confirm the KB
 
