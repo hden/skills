@@ -20,7 +20,7 @@ Add eligible repos or orgs for global scope and `publish=manual` if selected. Pr
 
 - Before work: clone the configured `https://github.com/OWNER/REPO.wiki.git` into a fresh directory (shallow for queries only). Read `Home.md` if present, then relevant pages. Search Markdown as needed.
 - During work: update the matching page with verified findings, scope, and evidence. If the Wiki uses a maintained index, add one line per new page.
-- After work: check the staged diff for secrets, personal or customer data, and audience. Run existing secret checks too. Commit once if changed. Auto mode runs `scripts/publish-wiki <clone>`; manual mode reports the draft path.
+- After work: check the staged diff for secrets, personal or customer data, and audience. Run configured secret checks such as the `secretlint` pre-commit hook. Keep the manual review for personal and customer data. Commit once if changed. Auto mode runs `scripts/publish-wiki <clone>`; manual mode reports the draft path.
 - `kb publish <clone>`: verify both remote URLs and review again. For `kb.migration` drafts, recheck the audience. Report the commit and page URLs, or the retained draft path. On index conflicts, reapply in a fresh clone and keep both distinct entries.
 
 ## Migrate
