@@ -21,10 +21,12 @@ Add eligible repos or orgs for global scope and `publish=manual` if selected. Pr
 - Before work: clone the configured `https://github.com/OWNER/REPO.wiki.git` into a fresh directory (shallow for queries only). Read `Home.md` if present, then relevant pages. Search Markdown as needed.
 - During work: update the matching page with verified findings, scope, and evidence. If the Wiki uses a maintained index, add one line per new page.
 - After work: check the staged diff for secrets, personal or customer data, and audience. Run configured secret checks such as the `secretlint` pre-commit hook. Keep the manual review for personal and customer data. Commit once if changed. Auto mode runs `scripts/publish-wiki <clone>`; manual mode reports the draft path.
-- `kb publish <clone>`: verify both remote URLs and review again. For `kb.migration` drafts, recheck the audience. Report the commit and page URLs, or the retained draft path. On index conflicts, reapply in a fresh clone and keep both distinct entries.
+- `kb publish <clone>`: verify both remote URLs and review again. For `kb.migration` drafts, recheck the audience. Report the commit and page URLs, or the retained draft path. On index conflicts, reapply in a fresh clone, keep both entries, and carry over `kb.migration` before publishing.
 
 ## Migrate
 
 On explicit `kb migrate [path ...]`, inspect curated Codex `memories` / `memories_v2`, matching Claude project memory, and supplied paths. Exclude transcripts and material with uncertain scope.
 
 Verify evidence and audience, then merge reusable findings into existing pages. Mark the clone with `git config --local kb.migration true`. Publish only to a verified private or internal Wiki when all its readers may see the material. Otherwise keep a draft. Report counts and page URLs.
+
+For Claude Code Routines, consider Markdown in a regular GitHub repository. Use it as the source and optionally render with GitHub Pages after verifying site access.

@@ -16,12 +16,17 @@ fi
 upstream_ref=$(git symbolic-ref refs/remotes/origin/HEAD)
 branch=${upstream_ref#refs/remotes/origin/}
 push_refspec="HEAD:refs/heads/$branch"
-base=$(git rev-parse "$upstream_ref")
-
-head=$(git rev-parse HEAD)
-if [ "$(git rev-list --parents -n 1 HEAD)" != "$head $base" ]; then
-  echo "kb: expected one reviewed commit on the checked-out Wiki base" >&2
+read -r head base extra <<EOF
+$(git rev-list --parents -n 1 HEAD)
+EOF
+if [ -z "$base" ] || [ -n "$extra" ] ||
+  ! git merge-base --is-ancestor "$base" "$upstream_ref"; then
+  echo "kb: expected one reviewed commit based on Wiki history" >&2
   exit 1
+fi
+
+if git merge-base --is-ancestor "$head" "$upstream_ref"; then
+  exit 0
 fi
 
 if git push --no-follow-tags origin "$push_refspec"; then
