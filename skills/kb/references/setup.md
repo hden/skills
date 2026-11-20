@@ -11,3 +11,5 @@ Example project instruction:
 Add a line per additional team and designate a default if requested. Team names allow switching without repeating the directory path. Ordinary Markdown directories need only an existing or agreed layout. For hosted presentation, follow the appropriate reference from the skill.
 
 To replace an older Wiki setting, confirm the corresponding filesystem directory and readership, then update the old instruction.
+
+Git synchronization is automatic when the KB branch has a configured upstream. Record any instruction to keep updates unpublished or require confirmation before publishing.
