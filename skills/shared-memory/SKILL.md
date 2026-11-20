@@ -11,7 +11,7 @@ Memory that a team's coding agents share through a Markdown directory, so the ne
 
 The project's agent instructions name the directory and storage (Git repository, GitHub Wiki, or local folder), the readership, the publication mode (`auto` or `confirm`), and whether a secret check is installed. Without them, ask for the directory or offer setup. State the directory you use.
 
-## Team rules
+## Rules
 
 - Readership is the boundary. Never write secrets, personal information, evaluations of individuals, or customer data. Keep out anything else a configured reader may not see, such as internal hosts in a public directory.
 - Record what is reusable and not already in code or docs. Personal preferences stay in the agent's own memory.
