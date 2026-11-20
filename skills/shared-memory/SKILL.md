@@ -14,7 +14,6 @@ Read the references that apply:
 | Git repository | [git](references/git.md) |
 | GitHub Wiki | [git](references/git.md), [github-wiki](references/github-wiki.md) |
 | Local folder | [local-folder](references/local-folder.md) |
-| Where each agent keeps instructions and memory | [agents](references/agents.md) |
 | `shared-memory setup` | [setup](references/setup.md), [agents](references/agents.md), [git](references/git.md) |
 | `shared-memory migrate` | [migrate](references/migrate.md), [agents](references/agents.md) |
 | First page where no convention exists | [page-template](references/page-template.md) |
@@ -53,7 +52,6 @@ When unsure, ask. secretlint is strongly recommended, not required; it catches o
 Skip if nothing changed.
 
 1. Review the full diff, leftovers included, against "What may be written".
-2. If the secret check flags something, remove it and retry. Never bypass it.
-3. Publish as the storage reference describes; with `confirm`, wait for approval of the diff.
-4. On concurrent edits keep both sides and ask about contradictions. Never discard others' work; if stuck, leave yours unpublished and report.
-5. Report what was written where, even in `auto` mode.
+2. If the secret check flags something, remove it and retry.
+3. Publish as the storage reference describes. Never discard others' work; if stuck, leave yours unpublished and report.
+4. Report what was written where, even in `auto` mode.

@@ -10,7 +10,7 @@ MEM=<directory>; : "${MEM:?}"
 git -C "$MEM" status --short; git -C "$MEM" log --oneline @{u}..
 ```
 
-Output from either command is a leftover: publish it (below) before pulling. Then:
+Output from either command is a leftover: publish it first (below). Otherwise:
 
 ```sh
 MEM=<directory>; : "${MEM:?}"
@@ -31,7 +31,7 @@ git -C "$MEM" log -p @{u}..               # everything the push publishes
 git -C "$MEM" push
 ```
 
-- Stop if the staged diff contains anything unreviewed, or if another session is editing the same clone.
+- Stop if the staged diff contains anything unreviewed.
 - `confirm`: show the `log -p @{u}..` output and push only after approval. On rejection, `git -C "$MEM" reset --soft @{u}` and `git -C "$MEM" stash push -m "shared-memory: rejected"` so later syncs are not blocked, and report.
 - Never use `--no-verify` or force-push.
 
@@ -43,8 +43,6 @@ git -C "$MEM" push
 
 ## Secretlint hook
 
-Requires Node.js. Pin secretlint the way the memory repository manages its tools, if it does. If a `pre-commit` hook already exists, ask instead of overwriting it.
-
 ```sh
 MEM=<directory>; : "${MEM:?}"
 hooks=$(cd "$MEM" && cd "$(git rev-parse --git-path hooks)" && pwd); : "${hooks:?}"
@@ -55,5 +53,3 @@ git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 npx --yes @secret
 HOOK
 chmod 755 "$hooks/pre-commit"
 ```
-
-Report the pushed commit and changed pages.
