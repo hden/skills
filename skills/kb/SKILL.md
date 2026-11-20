@@ -1,9 +1,9 @@
 ---
 name: kb
-description: Use to set up or maintain team memory, recall prior findings, record reusable lessons, tidy a knowledge base, or selectively migrate agent memories into shared Markdown.
+description: Manages team memory in a Markdown knowledge base. Applies when a project has a configured KB or the user asks to set up team memory, look up prior findings, record reusable knowledge, tidy the KB, or migrate agent memories.
 ---
 
-# Team Memory
+# kb
 
 A team can have one member. Work with the team's Markdown directory through the filesystem.
 
