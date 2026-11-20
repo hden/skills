@@ -1,29 +1,28 @@
 # Git storage
 
-Shell state may not persist: start every block with `MEM=<directory>; : "${MEM:?}"`. An empty `MEM` runs git against the project.
+Shell state may not persist: start every block with `set -e; MEM=<directory>; : "${MEM:?}"`. An empty `MEM` runs git against the project, and `set -e` stops a block at the first failure.
 
 ## Sync
 
 ```sh
-MEM=<directory>; : "${MEM:?}"
+set -e; MEM=<directory>; : "${MEM:?}"
 [ -e "$MEM/.git" ] || git clone <upstream> "$MEM"
+[ "$(git -C "$MEM" rev-parse --show-toplevel)" = "$(cd "$MEM" && pwd -P)" ]   # not a parent repo
 git -C "$MEM" status --short; git -C "$MEM" log --oneline @{u}..
 ```
 
-Output from either command is a leftover: publish it first (below). Otherwise:
+If a secret check is configured and this clone lacks the hook, install it (below) before anything else. Output from the last line is a leftover: publish it first (below). Otherwise:
 
 ```sh
-MEM=<directory>; : "${MEM:?}"
+set -e; MEM=<directory>; : "${MEM:?}"
 git -C "$MEM" pull --rebase
 ```
-
-If a secret check is configured and this clone lacks the hook, install it (below).
 
 ## Publish
 
 ```sh
-MEM=<directory>; : "${MEM:?}"
-git -C "$MEM" add <reviewed pages>
+set -e; MEM=<directory>; : "${MEM:?}"
+git -C "$MEM" add <reviewed pages>      # skip add and commit if only unpushed commits remain
 git -C "$MEM" diff --cached              # must match the reviewed diff exactly
 git -C "$MEM" commit -m "<what and why>"
 git -C "$MEM" pull --rebase
@@ -46,7 +45,7 @@ git -C "$MEM" push
 Requires Node.js. Pin secretlint the way the memory repository manages its tools, if it does. If a `pre-commit` hook already exists, ask instead of overwriting it.
 
 ```sh
-MEM=<directory>; : "${MEM:?}"
+set -e; MEM=<directory>; : "${MEM:?}"
 hooks=$(cd "$MEM" && cd "$(git rev-parse --git-path hooks)" && pwd); : "${hooks:?}"
 cat > "$hooks/pre-commit" <<'HOOK'
 #!/bin/sh
