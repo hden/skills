@@ -29,4 +29,4 @@ On explicit `kb migrate [path ...]`, inspect curated Codex `memories` / `memorie
 
 Verify evidence and audience, then merge reusable findings into existing pages. Mark the clone with `git config --local kb.migration true`. Publish only to a verified private or internal Wiki when all its readers may see the material. Otherwise keep a draft. Report counts and page URLs.
 
-For Claude Code Routines, consider Markdown in a regular GitHub repository. Use it as the source and optionally render with GitHub Pages after verifying site access.
+For [Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web) (including Routines), use Markdown in a regular GitHub repository if the source picker omits Wikis. GitHub Pages is optional for readers. Verify site access before enabling it.
