@@ -6,7 +6,7 @@ Use project scope by default. Add or update the team-memory instruction in the p
 
 Example project instruction:
 
-> Use the kb skill for team memory. The KB is at `$PLATFORM_KB_DIR` and is readable by the Platform team.
+> Always load the kb skill for team memory in this project. The KB is at `$PLATFORM_KB_DIR` and is readable by the Platform team. After loading the skill, verify the resolved KB path and state it before using the KB.
 
 If this project uses multiple KBs, give each a name for switching and record a default if requested. If the KB is rendered by a known platform, record it and follow the appropriate reference from the skill.
 

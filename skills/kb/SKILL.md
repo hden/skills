@@ -7,9 +7,11 @@ description: Use to set up or maintain team memory, recall prior findings, recor
 
 A team can have one member. Work with the team's Markdown directory through the filesystem.
 
-## Choose the team
+## Locate and confirm the KB
 
 Use an explicitly named team or directory first, then the project's configured team, then a global instruction scoped to this project. If this project has one configured KB, use it. If it has several, use the default or ask which one to use. Confirm the destination if the selected path is missing or unclear. Without a configured team, use the KB only on explicit request.
+
+Immediately after loading this skill and resolving the destination, verify that it is the intended directory. Before reading, editing, or syncing the KB, tell the user the resolved absolute path in one short line. Repeat this when switching KBs. Ask before proceeding if the path is unexpected or ambiguous.
 
 For `kb setup`, see [Setup](references/setup.md). Resolve the path once from those instructions for routine work. For presentation conventions, use [GitHub Wiki](references/wiki.md) or [GitHub Pages](references/pages.md) when applicable.
 
