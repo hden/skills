@@ -2,14 +2,18 @@
 
 Applies to any Git remote: a GitHub repository, a GitHub Wiki, or another host. `$KB` is the clone.
 
+Shell state may not persist between commands, so set `KB` in every command and stop if it is empty; otherwise git runs against the project repository instead.
+
 ## Sync
 
 ```sh
-[ -d "$KB/.git" ] || git clone <upstream> "$KB"   # reinstall the secret-check hook after cloning
+KB=<resolved path>; : "${KB:?}"
+[ -d "$KB/.git" ] || git clone <upstream> "$KB"
+git -C "$KB" status --short; git -C "$KB" log --oneline @{u}..   # leftovers: publish them first
 git -C "$KB" pull --rebase
 ```
 
-`pull` fails on leftover local changes or commits: publish them first.
+If the configuration records a secretlint hook and this clone lacks it (new clone, new machine), install it as in setup.
 
 ## Publish
 
@@ -21,7 +25,7 @@ git -C "$KB" pull --rebase
 git -C "$KB" push
 ```
 
-- Stage only the pages this session changed. If uncommitted edits you did not make share a file (another session in the same clone), stop and report; parallel sessions need separate clones or worktrees.
+- Stage only the reviewed pages: this session's changes and reviewed leftovers. If another session is still editing the same clone, stop and report; parallel sessions need separate clones or worktrees.
 - Do not use `--no-verify`.
 
 ## Conflicts

@@ -17,6 +17,7 @@ This file is the workflow. Details that vary are in references; read only the on
 | Agent: where instructions and memories live | [agents](references/agents.md) |
 | `kb setup` | [setup](references/setup.md) |
 | `kb migrate` | [migration](references/migration.md) |
+| New page format, when the KB has none | [page-template](references/page-template.md) |
 
 ## Configuration
 
@@ -27,11 +28,11 @@ The project's agent instructions, written by `kb setup`, name:
 - Publication: `auto` (publish after review) or `confirm` (show the diff, publish after approval)
 - Secret check: whether a secretlint hook is installed
 
-If there is no configuration or a variable is unset, ask for the path or offer `kb setup`. Tell the user the resolved path before first use, so a wrong KB is caught early.
+If there is no configuration or a variable is unset, ask for the path or offer `kb setup`. State the resolved path when you first use it and again in your final report, so a wrong KB is caught early.
 
 ## Before work
 
-1. Sync to the team's latest state, as the storage reference describes. If unpublished work is left over from an earlier session, publish it first via "After work"; it is someone's knowledge that nobody else can see yet.
+1. Sync to the team's latest state, as the storage reference describes. If unpublished work is left over from an earlier session, publish it first via "After work" in `confirm` mode, whatever the configured mode: nobody may have reviewed it, and it is someone's knowledge that nobody else can see yet.
 2. Read the index page if there is one, then only the relevant pages. Otherwise search the Markdown files for keywords.
 3. Treat entries as records of when they were written. Verify named files, commands, or flags still exist before relying on them.
 
@@ -45,24 +46,26 @@ Skip: what code, docs, or history already say; one-off details; personal prefere
 - Search before creating a page and update the one that covers the topic. Duplicates make recall miss.
 - Fix or delete wrong statements instead of appending a contradiction.
 - Separate observations (with evidence and an absolute date, e.g. `2026-11-20`) from hypotheses (with reasoning).
-- Follow the KB's existing format, language, and naming. Add each new page to the index.
+- Follow the KB's existing format, language, and naming. If the KB has no convention yet, use the [page template](references/page-template.md). Add each new page to the index.
 
-## Never write
+## What may be written
 
-Whatever the publication mode, the readership is the boundary. Never write:
+Two rules, checked in this order:
 
-- Secrets: tokens, passwords, API keys, connection strings
-- Personal information or evaluations of individuals
-- Customer data
+1. Never write, whatever the readership or publication mode:
+   - Secrets: tokens, passwords, API keys, connection strings with credentials
+   - Personal information or evaluations of individuals
+   - Customer data
+2. Everything else must be fine for every configured reader to see. Internal details such as hostnames, IP addresses, internal URLs, or unreleased plans are acceptable only when the readership is limited to people already allowed to see them; omit them from a public KB.
 
-When unsure, ask instead of writing. secretlint is strongly recommended but not required. It only catches token-like strings, so review personal and customer data yourself either way.
+When unsure, ask instead of writing. secretlint is strongly recommended but not required. It only catches token-like strings, so check rule 1 and rule 2 yourself either way.
 
 ## After work
 
 Skip if nothing changed.
 
-1. Review the diff of this session's changes against "Never write" and the readership.
-2. Run the secret check if configured. If it flags something, remove it and retry; never bypass the check.
+1. Review the full diff to be published (this session's changes and any leftovers) against "What may be written".
+2. If a secretlint hook is configured, it runs on commit. If it flags something, remove it and retry; never bypass the check.
 3. Publish as the storage reference describes. With `confirm`, show the diff and wait for approval first.
 4. When others changed the same content concurrently, keep both sides; contradictions go to the user. Never discard others' work to make your publish succeed. If you cannot resolve it, leave your work unpublished and report.
 5. Report what was written where, even in `auto` mode, so humans know what the team now reads.
